@@ -1,6 +1,8 @@
 from functools import lru_cache
 
 from pydantic import BaseSettings, PostgresDsn
+from dotenv import load_dotenv
+load_dotenv()
 
 
 class Settings(BaseSettings):
