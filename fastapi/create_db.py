@@ -1,11 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-
-engine = create_engine("postgresql://postgres:admin@localhost/rental_db",
-                       echo=True)
-Base = declarative_base()
+from dependencies import Base, engine
 
 
 class User(Base):
