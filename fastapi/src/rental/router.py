@@ -132,7 +132,7 @@ async def get_all_apartment(
         result = await session.execute(select_apartment)
         row = result.fetchall()
         if row:
-            return eval(str(row))
+            return [dict(zip(result.keys(), r)) for r in row]
         else:
             raise HTTPException(status_code=404, detail="Apartment not found")
     except SQLAlchemyError as e:

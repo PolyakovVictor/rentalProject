@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "rentalproject"
+version = "0.1.0"
+description = ""
+authors = ["Victor Polyakov <polyakov.victor21@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.2"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
