@@ -2,7 +2,6 @@ from pydantic import BaseModel
 
 
 class ApartmentCreate(BaseModel):
-    id: int
     user_id: int
     title: str
     price: str
@@ -11,9 +10,13 @@ class ApartmentCreate(BaseModel):
 
 
 class AddressCreate(BaseModel):
-    id: int
     country: str
     city: str
     address: str
     zip_code: str
     apartment_id: int
+
+
+class GroupUserCreate(BaseModel):
+    user_id: int
+    group_id: int
