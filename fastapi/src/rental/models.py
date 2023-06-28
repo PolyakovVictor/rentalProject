@@ -32,6 +32,7 @@ class Address(Base):
     country = Column(String, nullable=False)
     city = Column(String, nullable=False)
     address = Column(String, nullable=False)
+    zip_code = Column(String, nullable=False)
     apartment_id = Column(Integer, ForeignKey("apartment.id"))
 
     apartment = relationship("Apartment")
