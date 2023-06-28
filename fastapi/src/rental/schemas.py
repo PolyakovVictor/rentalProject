@@ -8,6 +8,9 @@ class ApartmentCreate(BaseModel):
     description: str
     group_id: int
 
+    class Config(BaseModel):
+        orm_mode = True
+
 
 class AddressCreate(BaseModel):
     country: str
@@ -16,7 +19,13 @@ class AddressCreate(BaseModel):
     zip_code: str
     apartment_id: int
 
+    class Config(BaseModel):
+        orm_mode = True
+
 
 class GroupUserCreate(BaseModel):
     user_id: int
     group_id: int
+
+    class Config(BaseModel):
+        orm_mode = True

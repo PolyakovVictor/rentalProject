@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import delete, insert, select, update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
-from rental.models import group, apartment, address, groupUser
+from rental.models import Group, Apartment, Address, GroupUser
 from rental.schemas import ApartmentCreate, AddressCreate, GroupUserCreate
 
 routerGroup = APIRouter(
@@ -22,7 +23,7 @@ async def create_group(group_data: dict,
                        session: AsyncSession = Depends(get_async_session)
                        ):
     try:
-        new_group = group.insert().values(**group_data)
+        new_group = insert(Group).values(**group_data)
         result = await session.execute(new_group)
         await session.commit()
         return {"id": result.inserted_primary_key[0]}
@@ -36,7 +37,7 @@ async def create_group_user(group_user_data: GroupUserCreate,
                             session: AsyncSession = Depends(get_async_session)
                             ):
     try:
-        new_group_user = groupUser.insert().values(**group_user_data.dict())
+        new_group_user = insert(GroupUser).values(**group_user_data.dict())
         result = await session.execute(new_group_user)
         await session.commit()
         return {"id": result.inserted_primary_key[0]}
@@ -50,7 +51,7 @@ async def create_apartment(apartment_data: ApartmentCreate,
                            session: AsyncSession = Depends(get_async_session)
                            ):
     try:
-        new_apartment = apartment.insert().values(**apartment_data.dict())
+        new_apartment = insert(Apartment).values(**apartment_data.dict())
         result = await session.execute(new_apartment)
         await session.commit()
         return {"id": result.inserted_primary_key[0]}
@@ -64,7 +65,7 @@ async def create_address(address_data: AddressCreate,
                          session: AsyncSession = Depends(get_async_session)
                          ):
     try:
-        new_address = address.insert().values(**address_data.dict())
+        new_address = insert(Address).values(**address_data.dict())
         result = await session.execute(new_address)
         await session.commit()
         return {"id": result.inserted_primary_key[0]}
@@ -79,11 +80,11 @@ async def get_group(group_id: int,
                     session: AsyncSession = Depends(get_async_session)
                     ):
     try:
-        select_group = group.select().where(group.c.id == group_id)
+        select_group = select(Group).where(Group.id == group_id)
         result = await session.execute(select_group)
         row = result.fetchone()
         if row:
-            return eval(str(row))
+            return row[0]
         else:
             raise HTTPException(status_code=404, detail="Group not found")
     except SQLAlchemyError as e:
@@ -95,11 +96,11 @@ async def get_all_group_user(
                             session: AsyncSession = Depends(get_async_session)
                             ):
     try:
-        select_group_user = groupUser.select()
+        select_group_user = select(GroupUser)
         result = await session.execute(select_group_user)
-        row = result.fetchall()
+        row = result.fetchone()
         if row:
-            return eval(str(row))
+            return row[0]
         else:
             raise HTTPException(status_code=404, detail="GroupUser not found")
     except SQLAlchemyError as e:
@@ -111,12 +112,12 @@ async def get_apartment(apartment_id: int,
                         session: AsyncSession = Depends(get_async_session)
                         ):
     try:
-        select_apartment = apartment.select().where(
-            apartment.c.id == apartment_id)
+        select_apartment = select(Apartment).where(
+            Apartment.id == apartment_id)
         result = await session.execute(select_apartment)
         row = result.fetchone()
         if row:
-            return eval(str(row))
+            return row[0]
         else:
             raise HTTPException(status_code=404, detail="Apartment not found")
     except SQLAlchemyError as e:
@@ -128,11 +129,11 @@ async def get_all_apartment(
                             session: AsyncSession = Depends(get_async_session)
                             ):
     try:
-        select_apartment = apartment.select()
+        select_apartment = select(Apartment)
         result = await session.execute(select_apartment)
-        row = result.fetchall()
+        row = result.fetchone()
         if row:
-            return [dict(zip(result.keys(), r)) for r in row]
+            return row[0]
         else:
             raise HTTPException(status_code=404, detail="Apartment not found")
     except SQLAlchemyError as e:
@@ -144,11 +145,11 @@ async def get_address(address_id: int,
                       session: AsyncSession = Depends(get_async_session)
                       ):
     try:
-        select_address = address.select().where(address.c.id == address_id)
+        select_address = select(Address).where(Address.id == address_id)
         result = await session.execute(select_address)
         row = result.fetchone()
         if row:
-            return eval(str(row))
+            return row[0]
         else:
             raise HTTPException(status_code=404, detail="Address not found")
     except SQLAlchemyError as e:
@@ -162,8 +163,8 @@ async def update_group(group_id: int,
                        session: AsyncSession = Depends(get_async_session)
                        ):
     try:
-        update_group = group.update().where(
-            group.c.id == group_id).values(**group_data)
+        update_group = update(Group).where(
+            Group.c.id == group_id).values(**group_data)
         result = await session.execute(update_group)
         await session.commit()
         if result.rowcount:
@@ -182,9 +183,9 @@ async def update_group_user(group_id: int,
                             session: AsyncSession = Depends(get_async_session)
                             ):
     try:
-        update_group_user = groupUser.update().where(
-            groupUser.c.group_id == group_id,
-            groupUser.c.user_id == user_id
+        update_group_user = update(GroupUser).where(
+            GroupUser.c.group_id == group_id,
+            GroupUser.c.user_id == user_id
         ).values(**group_user_data)
         result = await session.execute(update_group_user)
         await session.commit()
@@ -203,8 +204,8 @@ async def update_apartment(apartment_id: int,
                            session: AsyncSession = Depends(get_async_session)
                            ):
     try:
-        update_apartment = apartment.update().where(
-            apartment.c.id == apartment_id).values(**apartment_data.dict())
+        update_apartment = update(Apartment).where(
+            Apartment.c.id == apartment_id).values(**apartment_data.dict())
         result = await session.execute(update_apartment)
         await session.commit()
         if result.rowcount:
@@ -221,8 +222,8 @@ async def update_address(address_id: int, address_data: ApartmentCreate,
                          session: AsyncSession = Depends(get_async_session)
                          ):
     try:
-        update_address = address.update().where(
-            address.c.id == address_id
+        update_address = update(Address).where(
+            Address.c.id == address_id
             ).values(**address_data.dict())
         result = await session.execute(update_address)
         await session.commit()
@@ -241,7 +242,7 @@ async def delete_group(group_id: int,
                        session: AsyncSession = Depends(get_async_session)
                        ):
     try:
-        delete_group = group.delete().where(group.c.id == group_id)
+        delete_group = delete(Group).where(Group.c.id == group_id)
         result = await session.execute(delete_group)
         await session.commit()
         if result.rowcount:
@@ -259,9 +260,9 @@ async def delete_group_user(group_id: int,
                             session: AsyncSession = Depends(get_async_session)
                             ):
     try:
-        delete_group_user = groupUser.delete().where(
-            groupUser.c.group_id == group_id,
-            groupUser.c.user_id == user_id
+        delete_group_user = delete(GroupUser).where(
+            GroupUser.c.group_id == group_id,
+            GroupUser.c.user_id == user_id
         )
         result = await session.execute(delete_group_user)
         await session.commit()
@@ -279,8 +280,8 @@ async def delete_apartment(apartment_id: int,
                            session: AsyncSession = Depends(get_async_session)
                            ):
     try:
-        delete_apartment = apartment.delete().where(
-            apartment.c.id == apartment_id
+        delete_apartment = delete(Apartment).where(
+            Apartment.c.id == apartment_id
             )
         result = await session.execute(delete_apartment)
         await session.commit()
@@ -298,7 +299,7 @@ async def delete_address(address_id: int,
                          session: AsyncSession = Depends(get_async_session)
                          ):
     try:
-        delete_address = address.delete().where(address.c.id == address_id)
+        delete_address = delete(Address).where(Address.c.id == address_id)
         result = await session.execute(delete_address)
         await session.commit()
         if result.rowcount:
