@@ -1,41 +1,46 @@
 from datetime import datetime
-from sqlalchemy import Table, Column, Integer, String, ForeignKey, MetaData
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+
+Base = declarative_base()
 
 
-metadata = MetaData()
+class Group(Base):
+    __tablename__ = "group"
 
-group = Table(
-    "group",
-    metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-)
-
-apartment = Table(
-    "apartment",
-    metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("user_id", Integer, nullable=False),
-    Column("title", String, nullable=False),
-    Column("price", String, default=datetime.utcnow),
-    Column("description", String, nullable=False),
-    Column("group_id", Integer, ForeignKey(group.c.id)),
-)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
 
-address = Table(
-    "address",
-    metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("country", String, nullable=False),
-    Column("city", String, nullable=False),
-    Column("address", String, nullable=False),
-    Column("zip_code", String, nullable=False),
-    Column("apartment_id", Integer, ForeignKey(apartment.c.id)),
-)
+class Apartment(Base):
+    __tablename__ = "apartment"
 
-groupUser = Table(
-    "groupUser",
-    metadata,
-    Column("group_id", Integer, ForeignKey(group.c.id)),
-    Column("user_id", Integer, nullable=False),
-)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False)
+    title = Column(String, nullable=False)
+    price = Column(String, default=datetime.utcnow)
+    description = Column(String, nullable=False)
+    group_id = Column(Integer, ForeignKey("group.id"))
+
+    group = relationship("Group")
+
+
+class Address(Base):
+    __tablename__ = "address"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    country = Column(String, nullable=False)
+    city = Column(String, nullable=False)
+    address = Column(String, nullable=False)
+    apartment_id = Column(Integer, ForeignKey("apartment.id"))
+
+    apartment = relationship("Apartment")
+
+
+class GroupUser(Base):
+    __tablename__ = "groupUser"
+
+    group_id = Column(Integer, ForeignKey("group.id"), primary_key=True)
+    user_id = Column(Integer, nullable=False)
+
+    group = relationship("Group")
