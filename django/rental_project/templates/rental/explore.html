@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Explore Listings</h1>
+    <p>Discover amazing places around the world.</p>
+  
+    <!-- Filter form -->
+    <form class="mb-3">
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label for="price">Price:</label>
+          <input type="number" id="price" name="price" class="form-control" placeholder="Enter maximum price">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="country">Country:</label>
+          <select id="country" name="country" class="form-control">
+            <option value="">All</option>
+            <option value="country1">Country 1</option>
+            <option value="country2">Country 2</option>
+            <!-- Add more country options -->
+          </select>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="city">City:</label>
+          <select id="city" name="city" class="form-control">
+            <option value="">All</option>
+            <option value="city1">City 1</option>
+            <option value="city2">City 2</option>
+            <!-- Add more city options based on selected country -->
+          </select>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="property_type">Property Type:</label>
+          <select id="property_type" name="property_type" class="form-control">
+            <option value="">All</option>
+            <option value="type1">Type 1</option>
+            <option value="type2">Type 2</option>
+            <!-- Add more property type options -->
+          </select>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="bedrooms">Bedrooms:</label>
+          <select id="bedrooms" name="bedrooms" class="form-control">
+            <option value="">All</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <!-- Add more bedroom options -->
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Apply Filters</button>
+    </form>
+  
+    <!-- Listing cards -->
+    <div class="row">
+      <!-- Listing cards go here -->
+    </div>
+  </div>
+  
+<div class="container mt-5">
+  <h1>Explore Listings</h1>
+  <p>Discover amazing places around the world.</p>
+  <!-- Listing cards -->
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img src="path/to/image1.jpg" class="card-img-top" alt="Listing 1">
+        <div class="card-body">
+          <h5 class="card-title">Listing 1</h5>
+          <p class="card-text">Description of listing 1.</p>
+          <a href="#" class="btn btn-primary">View Details</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img src="path/to/image2.jpg" class="card-img-top" alt="Listing 2">
+        <div class="card-body">
+          <h5 class="card-title">Listing 2</h5>
+          <p class="card-text">Description of listing 2.</p>
+          <a href="#" class="btn btn-primary">View Details</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img src="path/to/image3.jpg" class="card-img-top" alt="Listing 3">
+        <div class="card-body">
+          <h5 class="card-title">Listing 3</h5>
+          <p class="card-text">Description of listing 3.</p>
+          <a href="#" class="btn btn-primary">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
