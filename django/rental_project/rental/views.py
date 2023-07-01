@@ -1,9 +1,11 @@
 from django.shortcuts import render
+from .utils import get_apartment_data
 
 
-# Create your views here.
 def explore_page_view(request):
-    return render(request, 'rental/explore.html')
+    apartment_data = get_apartment_data()
+    context = {'apartment_data': apartment_data}
+    return render(request, 'rental/explore.html', context)
 
 
 def home_page_view(request):

@@ -29,3 +29,15 @@ class GroupUserCreate(BaseModel):
 
     class Config(BaseModel):
         orm_mode = True
+
+
+class ApartmentModel(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    price: str
+    description: str
+    group_id: int
+
+    class Config:
+        orm_mode = True
