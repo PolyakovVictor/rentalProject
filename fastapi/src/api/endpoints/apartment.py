@@ -72,6 +72,8 @@ async def get_all_apartments(session=Depends(get_async_session)):
             title=row[0].title,
             price=row[0].price,
             description=row[0].description,
+            type=row[0].type,
+            room_count=row[0].room_count,
             group_id=row[0].group_id,
         ) for row in rows]
         return apartments

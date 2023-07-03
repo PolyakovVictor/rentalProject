@@ -6,6 +6,8 @@ class ApartmentCreate(BaseModel):
     title: str
     price: str
     description: str
+    type: str
+    room_count: int
     group_id: int
 
     class Config(BaseModel):
@@ -37,6 +39,8 @@ class ApartmentModel(BaseModel):
     title: str
     price: str
     description: str
+    type: str
+    room_count: int
     group_id: int
 
     class Config:

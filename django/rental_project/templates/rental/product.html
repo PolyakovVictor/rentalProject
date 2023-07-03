@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1>Apartments</h1>
+
+  <!-- Apartment listings -->
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ apartment_data.title }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{ apartment_data.owner }}</h6>
+          <p class="card-text">
+            <strong>ID:</strong> {{ apartment_data.id }}<br>
+            <strong>Country:</strong> {{ apartment_data.country }}<br>
+            <strong>City:</strong> {{ apartment_data.city }}<br>
+            <strong>Address:</strong> {{ apartment_data.address }}<br>
+            <strong>Postal Code:</strong> {{ apartment_data.postal_code }}<br>
+            <strong>Number of Rooms:</strong> {{ apartment_data.room_count }}<br>
+            <strong>Apartment Type:</strong> {{ apartment_data.type }}<br>
+            <strong>Description:</strong> {{ apartment_data.description }}<br>
+            <strong>Price:</strong> {{ apartment_data.price }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

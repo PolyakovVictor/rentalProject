@@ -20,6 +20,8 @@ class Apartment(Base):
     title = Column(String, nullable=False)
     price = Column(String, default=datetime.utcnow)
     description = Column(String, nullable=False)
+    type = Column(String, nullable=False)
+    room_count = Column(Integer, nullable=False)
     group_id = Column(Integer, ForeignKey("group.id"))
 
     group = relationship("Group")
