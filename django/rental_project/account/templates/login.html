@@ -1,4 +1,4 @@
-{% include 'base.html' %}
+{% extends 'base.html' %}
 
 {% load crispy_forms_tags %}
 
@@ -7,15 +7,16 @@
         <h1>Login</h1>
         <hr>
 
-        <form action="{% url 'login' %}", method="post">
+        <form action="{% url 'account:login' %}", method="post">
             {% csrf_token %}
             {{ form|crispy }}
+            <br>
             <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2">Submit</button>
             {{ form.non_field_errors }}
             <br>
             <br>
             <div class="text-center">
-                <a href="{% url 'register' %}">Don't have an account?</a>
+                <a href="{% url 'account:register' %}">Don't have an account?</a>
             </div>
         </form>
     </div>
