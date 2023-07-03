@@ -7,4 +7,5 @@ urlpatterns = [
     path('product', include('rental.urls')),
     path('', include('rental.urls')),
     path('admin/', admin.site.urls),
+    path("account/", include("account.urls")),
 ]
