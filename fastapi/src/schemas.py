@@ -6,6 +6,8 @@ class ApartmentCreate(BaseModel):
     title: str
     price: str
     description: str
+    type: str
+    room_count: int
     group_id: int
 
     class Config(BaseModel):
@@ -28,4 +30,18 @@ class GroupUserCreate(BaseModel):
     group_id: int
 
     class Config(BaseModel):
+        orm_mode = True
+
+
+class ApartmentModel(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    price: str
+    description: str
+    type: str
+    room_count: int
+    group_id: int
+
+    class Config:
         orm_mode = True

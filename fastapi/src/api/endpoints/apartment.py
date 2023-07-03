@@ -1,9 +1,10 @@
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import insert, select, update, delete
-
-from schemas import ApartmentCreate, AddressCreate
+from sqlalchemy.orm import selectinload
+from schemas import ApartmentCreate, AddressCreate, ApartmentModel
 from database import get_async_session
 from models import Apartment, Address
 
@@ -59,18 +60,23 @@ async def get_apartment(apartment_id: int,
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router_apartment.get("/apartments")
-async def get_all_apartment(
-                            session: AsyncSession = Depends(get_async_session)
-                            ):
+@router_apartment.get("/apartments", response_model=List[ApartmentModel])
+async def get_all_apartments(session=Depends(get_async_session)):
     try:
-        select_apartment = select(Apartment)
-        result = await session.execute(select_apartment)
-        row = result.fetchone()
-        if row:
-            return row[0]
-        else:
-            raise HTTPException(status_code=404, detail="Apartment not found")
+        stmt = select(Apartment).options(selectinload(Apartment.group))
+        result = await session.execute(stmt)
+        rows = result.fetchall()
+        apartments = [ApartmentModel(
+            id=row[0].id,
+            user_id=row[0].user_id,
+            title=row[0].title,
+            price=row[0].price,
+            description=row[0].description,
+            type=row[0].type,
+            room_count=row[0].room_count,
+            group_id=row[0].group_id,
+        ) for row in rows]
+        return apartments
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
