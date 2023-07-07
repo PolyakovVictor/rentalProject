@@ -27,8 +27,14 @@
             <a class="nav-link" href="{% url 'rental:host' %}">Host</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="{% url 'rental:user_groups' %}">Groups</a>
+          </li>
+          <li class="nav-item">
             {% if user.is_authenticated %}
-            <div class="dropdown">
+              <!-- <li class="nav-item">
+                <a class="nav-link" href="{% url 'rental:host' %}">user_id:{{user.id}}</a>
+              </li> -->
+              <div class="dropdown">
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ user.first_name }}</a>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="{% url 'account:password_change' %}">Change password</a></li>

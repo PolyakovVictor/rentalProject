@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid px-5">
+    <div class="row">
+        <div class="col-lg-6 container mt-5">
+            <h1>{{group.title}}</h1>
+            <p>{{group.description}}</p>
+            <p>Settlers limit: {{ group.settlers_limit }}</p>
+            <p><i>Start of lease: {{group.start_of_lease}}; End of lease: {{group.start_of_lease}}</i></p>
+            {% if user in group_users %}
+                <a href="{% url 'rental:group_leave' group.id %}" class="btn btn-danger">Leave from group</a>
+            {% else %}
+                <a href="{% url 'rental:group_join' group.id %}" class="btn btn-primary">Join to group</a>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-6 container mt-5">
+            <h1>People</h1>
+            {% for group_user in group_users %}
+                <a href="#" class="text-decoration-none">{{group_user.first_name}}</a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

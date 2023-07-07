@@ -3,10 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import insert, select, update, delete
-from sqlalchemy.orm import selectinload
-from schemas import ApartmentCreate, AddressCreate, ApartmentModel
+from schemas import ApartmentCreate, AddressCreate, ApartmentModel, GroupModel
 from database import get_async_session
-from models import Apartment, Address
+from models import Apartment, Address, Group
 
 router_apartment = APIRouter(
     prefix="/Apartment",
@@ -63,19 +62,10 @@ async def get_apartment(apartment_id: int,
 @router_apartment.get("/apartments", response_model=List[ApartmentModel])
 async def get_all_apartments(session=Depends(get_async_session)):
     try:
-        stmt = select(Apartment).options(selectinload(Apartment.group))
+        stmt = select(Apartment)
         result = await session.execute(stmt)
-        rows = result.fetchall()
-        apartments = [ApartmentModel(
-            id=row[0].id,
-            user_id=row[0].user_id,
-            title=row[0].title,
-            price=row[0].price,
-            description=row[0].description,
-            type=row[0].type,
-            room_count=row[0].room_count,
-            group_id=row[0].group_id,
-        ) for row in rows]
+        rows = result.scalars().all()
+        apartments = [ApartmentModel.from_orm(row) for row in rows]
         return apartments
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -93,6 +83,20 @@ async def get_address(address_id: int,
             return row[0]
         else:
             raise HTTPException(status_code=404, detail="Address not found")
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router_apartment.get("/getGroups/{apartment_id}", response_model=List[GroupModel])
+async def get_groups_for_apartment(apartment_id: int,
+                                   session: AsyncSession = Depends(get_async_session)
+                                   ):
+    try:
+        select_groups = select(Group).where(Group.apartment_id == apartment_id).filter()
+        result = await session.execute(select_groups)
+        rows = result.scalars().all()
+        groups = [GroupModel.from_orm(row) for row in rows]
+        return groups
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
