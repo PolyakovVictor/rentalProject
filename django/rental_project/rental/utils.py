@@ -9,8 +9,15 @@ def get_apartment_data():
         data = response.json()
         return data
     else:
-        # Обработка ошибки при запросе к FastAPI
-        # Верните сообщение об ошибке или выполните другие действия
+        pass
+
+
+def get_filter_apartment(max_price, title, country, city, type, room_count):
+    response = requests.get(f'http://127.0.0.1:8080/Apartment/filter?max_price={max_price}&title={title}&country={country}&city={city}&type={type}&room_count={room_count}')
+    if response.status_code == 200:
+        data = response.json()
+        return data
+    else:
         pass
 
 
@@ -20,8 +27,6 @@ def get_apartment_data_by_id(apartment_id):
         data = response.json()
         return data
     else:
-        # Обработка ошибки при запросе к FastAPI
-        # Верните сообщение об ошибке или выполните другие действия
         pass
 
 

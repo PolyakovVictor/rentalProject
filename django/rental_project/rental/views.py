@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import get_user_model
+from django.core.paginator import Paginator
 
 from .forms import CreateGroupForm
 from .utils import (
@@ -13,12 +14,33 @@ from .utils import (
     get_users_by_group_id,
     add_user_to_group,
     leave_from_group as leave_from_group_util,
-    delete_group
+    delete_group,
+    get_filter_apartment
 )
 
 
 def explore_page_view(request):
-    apartment_data = get_apartment_data()
+    max_price = request.GET.get("max_price")
+    title = request.GET.get("title")
+    country = request.GET.get("country")
+    city = request.GET.get("city")
+    property_type = request.GET.get("type")
+    room_count = request.GET.get("room_count")
+    variables = [
+        max_price,
+        title,
+        country,
+        city,
+        property_type,
+        room_count
+    ]
+    if any(variables):
+        apartments = get_filter_apartment(max_price, title, country, city, property_type, room_count)
+    else:
+        apartments = get_apartment_data()
+    paginator = Paginator(apartments, 9)
+    page_number = request.GET.get('page')
+    apartment_data = paginator.get_page(page_number)
     context = {'apartment_data': apartment_data}
     return render(request, 'rental/explore.html', context)
 

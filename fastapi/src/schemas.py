@@ -69,5 +69,17 @@ class GroupModel(BaseModel):
     description: str
     title: str
 
-    class Config:
+    class Config(BaseModel):
+        orm_mode = True
+
+
+class AddressModel(BaseModel):
+    id: int
+    country: str
+    city: str
+    address: str
+    zip_code: str
+    apartment_id: int
+
+    class Config(BaseModel):
         orm_mode = True
