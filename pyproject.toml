@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 django = "^4.2.2"
 alembic = "^1.11.1"
+fastapi-pagination = "^0.12.5"
 
 
 [tool.poetry.group.dev.dependencies]

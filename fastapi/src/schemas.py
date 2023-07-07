@@ -43,5 +43,17 @@ class ApartmentModel(BaseModel):
     room_count: int
     group_id: int
 
-    class Config:
+    class Config(BaseModel):
+        orm_mode = True
+
+
+class AddressModel(BaseModel):
+    id: int
+    country: str
+    city: str
+    address: str
+    zip_code: str
+    apartment_id: int
+
+    class Config(BaseModel):
         orm_mode = True

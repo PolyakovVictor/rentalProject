@@ -6,42 +6,47 @@
     <p>Discover amazing places around the world.</p>
   
 
-    <form class="mb-3">
+    <form action="{% url 'rental:filter' %}" class="mb-3">
       <div class="row">
         <div class="col-md-3 mb-3">
           <label for="price">Price:</label>
-          <input type="number" id="price" name="price" class="form-control" placeholder="Enter maximum price">
+          <input type="number" id="price" name="max_price" class="form-control" placeholder="Enter maximum price">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="title">Title:</label>
+          <input type="text" id="title" name="title" class="form-control" placeholder="Enter title">
         </div>
         <div class="col-md-3 mb-3">
           <label for="country">Country:</label>
           <select id="country" name="country" class="form-control">
             <option value="">All</option>
-            <option value="country1">Country 1</option>
-            <option value="country2">Country 2</option>
+            <option value="German">German</option>
+            <option value="India">India</option>
           </select>
         </div>
         <div class="col-md-3 mb-3">
           <label for="city">City:</label>
-          <select id="city" name="city" class="form-control">
-            <option value="">All</option>
-            <option value="city1">City 1</option>
-            <option value="city2">City 2</option>
+          <input type="text" id="city" name="city" class="form-control" placeholder="Enter city">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="type">Property Type:</label>
+          <select id="type" name="type" class="form-control">
+            <option value="room">Room</option>
+            <option value="Home">Home</option>
           </select>
         </div>
         <div class="col-md-3 mb-3">
-          <label for="property_type">Property Type:</label>
-          <select id="property_type" name="property_type" class="form-control">
-            <option value="">All</option>
-            <option value="type1">Type 1</option>
-            <option value="type2">Type 2</option>
-          </select>
-        </div>
-        <div class="col-md-3 mb-3">
-          <label for="bedrooms">Bedrooms:</label>
-          <select id="bedrooms" name="bedrooms" class="form-control">
-            <option value="">All</option>
+          <label for="bedrooms">Count rooms:</label>
+          <select id="bedrooms" name="room_count" class="form-control">
             <option value="1">1</option>
             <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
           </select>
         </div>
       </div>
@@ -58,24 +63,39 @@
   <h1>Explore Listings</h1>
   <p>Discover amazing places around the world.</p>
 
-<div class="row">
-  {% if apartment_data %}
-  {% for apartment in apartment_data %}
-        <div class="col-md-4 mb-4">
-          <div class="card">
-            <img src="/static/img/home.png" class="card-img-top" alt="Listing 1">
-            <div class="card-body">
-              <h5 class="card-title">{{ apartment.title }}</h5>
-              <p class="card-text">{{ apartment.id }}</p>
-              <p class="card-text">{{ apartment.description }}</p>
-              <p class="card-price">{{ apartment.price }}</p>
-              <a href="{% url 'rental:apartment_details' apartment.id %}" class="btn btn-primary">View Details</a>
-            </div>
+  <div class="row" id="apartment-list">
+    {% for apartment in apartment_data %}
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <img src="/static/img/home.png" class="card-img-top" alt="Listing 1">
+          <div class="card-body">
+            <h5 class="card-title">{{ apartment.title }}</h5>
+            <p class="card-text">{{ apartment.id }}</p>
+            <p class="card-text">{{ apartment.description }}</p>
+            <p class="card-price">{{ apartment.price }}</p>
+            <a href="{% url 'rental:apartment_details' apartment.id %}" class="btn btn-primary">View Details</a>
           </div>
         </div>
-  {% endfor %}
-  {% else %}
-      <p>No apartment data available.</p>
-  {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="pagination">
+    {% if apartment_data.has_previous %}
+      <a class="btn" href="?page={{ apartment_data.previous_page_number }}">Previous</a>
+    {% endif %}
+    
+    {% for num in apartment_data.paginator.page_range %}
+      {% if num == apartment_data.number %}
+        <a class="btn btn-red">{{ num }}</a>
+      {% else %}
+        <a class="btn" href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+    
+    {% if apartment_data.has_next %}
+      <a class="btn" href="?page={{ apartment_data.next_page_number }}">Next</a>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
