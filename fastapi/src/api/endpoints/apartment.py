@@ -1,4 +1,5 @@
 from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
@@ -102,20 +103,6 @@ async def get_groups_for_apartment(apartment_id: int,
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router_apartment.get("/getGroups/{apartment_id}", response_model=List[GroupModel])
-async def get_groups_for_apartment(apartment_id: int,
-                                   session: AsyncSession = Depends(get_async_session)
-                                   ):
-    try:
-        select_groups = select(Group).where(Group.apartment_id == apartment_id).filter()
-        result = await session.execute(select_groups)
-        rows = result.scalars().all()
-        groups = [GroupModel.from_orm(row) for row in rows]
-        return groups
-    except SQLAlchemyError as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 # UPDATE
 @router_apartment.put("/apartments/{apartment_id}")
 async def update_apartment(apartment_id: int,
@@ -123,19 +110,8 @@ async def update_apartment(apartment_id: int,
                            session: AsyncSession = Depends(get_async_session)
                            ):
     try:
-        # apartment = await CRUD(session).get_by_id(Apartment, apartment_id)
         apartment = Apartment(apartment_id=apartment_id, **apartment_data().dict())
         await session.add(apartment)
-        # if apartment:
-        #     apartment.user_id = apartment_data.user_id
-        #     apartment.title = apartment_data.title
-        #     apartment.price = apartment_data.price
-        #     apartment.description = apartment_data.description
-        #     apartment.type = apartment_data.type
-        #     apartment.room_count = apartment_data.room_count
-        #     apartment.group_id = apartment_data.group_id
-        # else:
-        #     raise HTTPException(status_code=404, detail="Apartment not found")
         return await CRUD(session).add(apartment)
     except NoResultFound:
         raise HTTPException(status_code=404, detail="Apartment not Found")

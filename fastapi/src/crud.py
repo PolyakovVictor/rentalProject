@@ -1,8 +1,6 @@
-# THIS FILE NOT YET USED ANYWHERE
-
-
 from sqlalchemy import select
-from models import Address
+
+from models import Address, Group
 
 
 class CRUD:
@@ -23,6 +21,12 @@ class CRUD:
         result = await self.session.execute(stmt)
         objects = result.scalars().all()
         return [obj.__dict__ for obj in objects]
+
+    async def get_groups_by_apartment_id(self, apartment_id):
+        stmt = select(Group).where(Group.apartment_id == apartment_id)
+        result = await self.session.execute(stmt)
+        objects = result.scalars().all()
+        return objects
 
     async def delete(self, model):
         await self.session.delete(model)

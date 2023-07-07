@@ -69,7 +69,7 @@ class GroupModel(BaseModel):
     description: str
     title: str
 
-    class Config(BaseModel):
+    class Config:
         orm_mode = True
 
 
