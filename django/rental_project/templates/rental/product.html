@@ -1,28 +1,52 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-  <h1>Apartments</h1>
-
-  <!-- Apartment listings -->
+<div class="container-fluid px-5">
   <div class="row">
-    <div class="col-md-6 mb-4">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">{{ apartment_data.title }}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">{{ apartment_data.owner }}</h6>
-          <p class="card-text">
-            <strong>ID:</strong> {{ apartment_data.id }}<br>
-            <strong>Country:</strong> {{ apartment_data.country }}<br>
-            <strong>City:</strong> {{ apartment_data.city }}<br>
-            <strong>Address:</strong> {{ apartment_data.address }}<br>
-            <strong>Postal Code:</strong> {{ apartment_data.postal_code }}<br>
-            <strong>Number of Rooms:</strong> {{ apartment_data.room_count }}<br>
-            <strong>Apartment Type:</strong> {{ apartment_data.type }}<br>
-            <strong>Description:</strong> {{ apartment_data.description }}<br>
-            <strong>Price:</strong> {{ apartment_data.price }}
-          </p>
+    <div class="col-lg-6 container mt-5">
+      <h1>Apartment</h1>
+
+      <!-- Apartment listings -->
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ apartment_data.title }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{ apartment_data.owner }}</h6>
+              <p class="card-text">
+                <strong>ID:</strong> {{ apartment_data.id }}<br>
+                <strong>Country:</strong> {{ apartment_data.country }}<br>
+                <strong>City:</strong> {{ apartment_data.city }}<br>
+                <strong>Address:</strong> {{ apartment_data.address }}<br>
+                <strong>Postal Code:</strong> {{ apartment_data.postal_code }}<br>
+                <strong>Number of Rooms:</strong> {{ apartment_data.room_count }}<br>
+                <strong>Apartment Type:</strong> {{ apartment_data.type }}<br>
+                <strong>Description:</strong> {{ apartment_data.description }}<br>
+                <strong>Price:</strong> {{ apartment_data.price }}
+              </p>
+              <a href="{% url 'rental:create_group' apartment_data.id %}" class="btn btn-primary">Create group</a>
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6 container mt-5">
+      <h1>Groups</h1>
+      <div class="overflow-scroll">
+        {% for group in groups_data %}
+          <div class="card">
+            <h5 class="card-title"><a class="text-decoration-none" href="{% url 'rental:group_details' group.id %}">{{ group.title }}</a></h5>
+            <p class="card-text">
+              {% if group.description %}
+                <strong>Description:</strong> {{ group.description }}<br>
+              {% endif %}
+              <strong>Start of lease:</strong> {{ group.start_of_lease }}<br>
+              <strong>End of lease:</strong> {{ group.end_of_lease }}<br>
+              <strong>Settlers limit:</strong> {{ group.settlers_limit }}<br>
+            </p>
+          </div>
+        {% endfor %}
       </div>
     </div>
   </div>

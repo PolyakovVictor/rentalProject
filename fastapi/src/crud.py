@@ -1,29 +1,53 @@
 from sqlalchemy import select
 
-# THIS FILE NOT YET USED ANYWHERE
+from models import Address, Group
 
 
 class CRUD:
-    def __init__(self, get_async_session):
-        self.get_async_session = get_async_session
+    def __init__(self, session):
+        self.session = session
 
-    async def create(self, obj):
-        async with self.get_async_session() as session:
-            session.add(obj)
-            await session.commit()
+    async def add(self, model):
+        self.session.add(model)
+        await self.session.commit()
+        await self.session.refresh(model)
+        return model.__dict__
 
     async def get_by_id(self, model, id):
-        async with self.get_async_session() as session:
-            query = select(model).filter(model.id == id)
-            result = await session.execute(query)
-            return result.scalar_one_or_none()
+        return (await self.session.get(model, id))
 
-    async def update(self, obj):
-        async with self.get_async_session() as session:
-            session.add(obj)
-            await session.commit()
+    async def get_all(self, model):
+        stmt = select(model)
+        result = await self.session.execute(stmt)
+        objects = result.scalars().all()
+        return [obj.__dict__ for obj in objects]
 
-    async def delete(self, obj):
-        async with self.get_async_session() as session:
-            session.delete(obj)
-            await session.commit()
+    async def get_groups_by_apartment_id(self, apartment_id):
+        stmt = select(Group).where(Group.apartment_id == apartment_id)
+        result = await self.session.execute(stmt)
+        objects = result.scalars().all()
+        return objects
+
+    async def delete(self, model):
+        await self.session.delete(model)
+        await self.session.commit()
+
+    async def get_filter_apartments(self, model, max_price=None, title=None, city=None, country=None, room_count=None, type=None):
+        stmt = select(model).join(Address, model.id == Address.apartment_id)
+
+        if max_price is not None:
+            stmt = stmt.where(model.price <= max_price)
+        if room_count is not None:
+            stmt = stmt.where(model.room_count == room_count)
+        if type is not None:
+            stmt = stmt.where(model.type.ilike(f'%{type}%'))
+        if title is not None:
+            stmt = stmt.where(model.title.ilike(f'%{title}%'))
+        if city is not None:
+            stmt = stmt.where(Address.city.ilike(f'%{city}%'))
+        if country is not None:
+            stmt = stmt.where(Address.country.ilike(f'%{country}%'))
+
+        result = await self.session.execute(stmt)
+        objects = result.scalars().all()
+        return [obj.__dict__ for obj in objects]

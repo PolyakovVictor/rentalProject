@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container bg-white shadow-md p-5 form-layout">
+        <h1>Create group</h1>
+        <hr>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <br>
+            <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2">Submit</button>
+        </form>
+    </div>
+{% endblock %}

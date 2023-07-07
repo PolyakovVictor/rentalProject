@@ -1,9 +1,11 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import insert, select, update, delete
 
-from schemas import GroupUserCreate
+from schemas import GroupUserCreate, GroupCreate, GroupModel
 from database import get_async_session
 from models import Group, GroupUser
 
@@ -12,12 +14,13 @@ router_group = APIRouter(
     tags=["Group"]
 )
 
+
 @router_group.post("/groups")
-async def create_group(group_data: dict,
+async def create_group(group_data: GroupCreate,
                        session: AsyncSession = Depends(get_async_session)
                        ):
     try:
-        new_group = insert(Group).values(**group_data)
+        new_group = insert(Group).values(**group_data.dict())
         result = await session.execute(new_group)
         await session.commit()
         return {"id": result.inserted_primary_key[0]}
@@ -57,18 +60,30 @@ async def get_group(group_id: int,
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router_group.get("/groupUsers")
-async def get_all_group_user(
+@router_group.get("/groupUsers/{group_id}")
+async def get_all_users_in_group(
+                            group_id: int,
                             session: AsyncSession = Depends(get_async_session)
-                            ):
+                            ) -> List[int]:
     try:
-        select_group_user = select(GroupUser)
+        select_group_user = select(GroupUser.user_id).where(GroupUser.group_id == group_id)
         result = await session.execute(select_group_user)
-        row = result.fetchone()
-        if row:
-            return row[0]
-        else:
-            raise HTTPException(status_code=404, detail="GroupUser not found")
+        rows = result.scalars().all()
+        return rows
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router_group.get("/userGroups/{user_id}", response_model=List[GroupModel])
+async def get_user_groups(user_id: int,
+                          session: AsyncSession = Depends(get_async_session)
+                          ):
+    try:
+        select_user_groups = select(Group).join(GroupUser).filter(GroupUser.user_id == user_id).filter()
+        result = await session.execute(select_user_groups)
+        rows = result.scalars().all()
+        groups = [GroupModel.from_orm(row) for row in rows]
+        return groups
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
